@@ -13,3 +13,7 @@ The following commands are available:
 1. [Canonical Huffman codes](https://en.wikipedia.org/wiki/Canonical_Huffman_code) and optimizations are used to avoid explicit symbol search in the tree, reducing the work time.
 1. Input errors are cathed. Helpful message is output.
 1. The handwritten priority queue is available
+
+
+## Test
+Some tests examples in the "test" folder.
