@@ -22,24 +22,24 @@ private:
         int ch;
 
         Bor(int64_t weight, int ch);
-        Bor(std::shared_ptr<Bor> a, std::shared_ptr<Bor> b);
+        Bor(std::shared_ptr<Bor> &&a, std::shared_ptr<Bor> &&b);
         ~Bor();
     };
 
-    void Print(std::shared_ptr<Bor> cur, std::string &pth) const;
-    void BuildKeys(std::shared_ptr<Bor> root);
+    void Print(const std::shared_ptr<Bor> &cur, std::string &pth) const;
+    void BuildKeys(const std::shared_ptr<Bor> &root);
     void BuildMap(char *file_name);
     std::shared_ptr<Bor> BuildBor() const;
-    void CalcLen(std::shared_ptr<Bor> cur, int depth);
+    void CalcLen(const std::shared_ptr<Bor> &cur, int depth);
     void WriteCompressInfo(char *cur_file);
     void WriteNBitsNumber(int x, int n, int inv = 0);
     void AddBit(int x);
     void WriteChar();
     void WriteBlock() const;
     void EncodeAndWrite(int ch);
-    int ReverseNBitsNumber(int x, int n) const;
+    static int ReverseNBitsNumber(int x, int n) ;
     void ReadFile(char *file_name, void (Compress::*relax_char)(int));
-    int ExtractFileFromRelativePath(char *cur_file) const;
+    static int ExtractFileFromRelativePath(char *cur_file) ;
     void UpdateMap(int ch);
     char *result_file_;
 };

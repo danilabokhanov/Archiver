@@ -60,7 +60,7 @@ void Compress::WriteNBitsNumber(int x, int n, int inv) {
     }
 }
 
-int Compress::ReverseNBitsNumber(int x, int n) const {
+int Compress::ReverseNBitsNumber(int x, int n) {
     int res = 0;
     for (int i = 0; i < n; i++) {
         res += ((x & 1) << (n - i - 1));
@@ -90,7 +90,7 @@ void Compress::ReadFile(char *file_name, void (Compress::*relax_char)(int)) {
     input.close();
 }
 
-int Compress::ExtractFileFromRelativePath(char *cur_file) const {
+int Compress::ExtractFileFromRelativePath(char *cur_file) {
     int pos = -1;
     for (int i = 0; cur_file[i] != 0; i++) {
         if (cur_file[i] == '/') {
@@ -133,7 +133,7 @@ void Compress::BuildMap(char *file_name) {
 }
 
 std::shared_ptr<Compress::Bor> Compress::BuildBor() const {
-    auto cmp = [](std::shared_ptr<Bor> a, std::shared_ptr<Bor> b) {
+    auto cmp = [](const std::shared_ptr<Bor> &a, const std::shared_ptr<Bor> &b) {
         return std::make_pair(a->weight, a->ch) < std::make_pair(b->weight, b->ch);
     };
     PriorityQueue<std::shared_ptr<Bor>, decltype(cmp)> nodes;
@@ -145,14 +145,14 @@ std::shared_ptr<Compress::Bor> Compress::BuildBor() const {
         nodes.Pop();
         std::shared_ptr<Bor> b = nodes.Top();
         nodes.Pop();
-        nodes.Push(std::make_shared<Bor>(Bor(a, b)));
+        nodes.Push(std::make_shared<Bor>(Bor(std::move(a), std::move(b))));
     }
     std::string pth;
     Print(nodes.Top(), pth);
     return nodes.Top();
 }
 
-void Compress::CalcLen(std::shared_ptr<Bor> cur, int depth) {
+void Compress::CalcLen(const std::shared_ptr<Bor> &cur, int depth) {
     if (!cur) {
         return;
     }
@@ -165,7 +165,7 @@ void Compress::CalcLen(std::shared_ptr<Bor> cur, int depth) {
     CalcLen(cur->child[1], depth + 1);
 }
 
-void Compress::BuildKeys(std::shared_ptr<Bor> root) {
+void Compress::BuildKeys(const std::shared_ptr<Bor> &root) {
     std::fill(cnt_len_, cnt_len_ + MAX_CHAR, 0);
     max_len_ = 0;
     CalcLen(root, 0);
@@ -188,7 +188,7 @@ void Compress::BuildKeys(std::shared_ptr<Bor> root) {
 Compress::Bor::Bor(int64_t weight, int ch) : weight(weight), is_tern(true), ch(ch) {
 }
 
-Compress::Bor::Bor(std::shared_ptr<Bor> a, std::shared_ptr<Bor> b)
+Compress::Bor::Bor(std::shared_ptr<Bor> &&a, std::shared_ptr<Bor> &&b)
     : weight(a->weight + b->weight), ch(std::min(a->ch, b->ch)) {
     child[0] = a;
     child[1] = b;
@@ -196,7 +196,7 @@ Compress::Bor::Bor(std::shared_ptr<Bor> a, std::shared_ptr<Bor> b)
 Compress::Bor::~Bor() {
 }
 
-void Compress::Print(std::shared_ptr<Bor> cur, std::string &pth) const {
+void Compress::Print(const std::shared_ptr<Bor> &cur, std::string &pth) const {
     if (!cur) {
         return;
     }
